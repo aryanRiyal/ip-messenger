@@ -1,1 +1,0 @@
-strace -o runS.log ./runS

@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "9999:9999"
+    networks:
+      - chat-net
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    networks:
+      - chat-net
+    profiles:
+      - interactive
+    stdin_open: true
+    tty: true
+
+networks:
+  chat-net:
+    driver: bridge

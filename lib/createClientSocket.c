@@ -31,10 +31,12 @@ void createClientSocket(int *sockfd, char *IP){
     memset( &serverAddress, '\0', sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(SERVER_PORT);
-    if(inet_pton(AF_INET, IP, &serverAddress.sin_addr)<=0){
-        printf("[-]inet_pton Error for %s\n", IP);
+    struct hostent *he;
+    if((he = gethostbyname(IP)) == NULL){
+        printf("[-]gethostbyname Error for %s\n", IP);
         close(*sockfd);
         exit(EXIT_FAILURE);
     }
+    serverAddress.sin_addr = *((struct in_addr *)he->h_addr);
     Connect( *sockfd, (SA *)&serverAddress, sizeof(serverAddress));
 }

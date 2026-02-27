@@ -1,5 +1,7 @@
 #include "../lib/header.h"
 
+struct serverData server;
+
 int main(void){
     int listenfd=0;
     int maxfd=0,newSocketfd = 0;

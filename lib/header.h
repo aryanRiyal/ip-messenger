@@ -13,6 +13,7 @@
 #include <sys/time.h>
 #include <sys/errno.h>
 #include <fcntl.h>
+#include <netdb.h>
 
 //Macros
 #define MB 1024
@@ -41,7 +42,7 @@ struct serverData {
     struct client clientList[NO_OF_CLIENTS];
 };
 
-struct serverData server;
+extern struct serverData server;
 
 // Function Declarations
 
