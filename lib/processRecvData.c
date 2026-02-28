@@ -44,12 +44,41 @@ int processRecvData( int socket, char *buffer) {
         return 0;
     }
     if(strncmp(buffer, "CONNECT",7) == 0) {
+        // Graceful disconnect: Notify the previous user if we were already connected to someone
+        if (strlen(server.clientList[indexSender].chatWith) != 0) {
+            snprintf(bufferSend, sizeof(bufferSend), "[System] : %s has disconnected from you.\n", server.clientList[indexSender].cname);
+            if (server.clientList[indexSender].chatWithfd > 0) {
+                serverSend(server.clientList[indexSender].chatWithfd, bufferSend);
+            }
+        }
+
         sscanf(buffer,"CONNECT%*[ ]%s",connectedClient);
         strcpy(server.clientList[indexSender].chatWith, connectedClient);
 
         indexReceiver = findClientIndexName( server.clientList[indexSender].chatWith);
         server.clientList[indexSender].chatWithfd = server.clientList[indexReceiver].fileDes;
         serverSend( server.clientList[indexSender].fileDes, CONNECTED);
+
+        // Notify the new person that we connected
+        snprintf(bufferSend, sizeof(bufferSend), "[System] : %s has connected with you. (Hint: You must also type 'CONNECT %s' to reply back.)\n", server.clientList[indexSender].cname, server.clientList[indexSender].cname);
+        serverSend(server.clientList[indexSender].chatWithfd, bufferSend);
+
+        return 0;
+    }
+
+    if(strncmp(buffer, "DISCONNECT", 10) == 0) {
+        if (strlen(server.clientList[indexSender].chatWith) != 0) {
+            snprintf(bufferSend, sizeof(bufferSend), "[System] : %s has disconnected from you.\n", server.clientList[indexSender].cname);
+            if (server.clientList[indexSender].chatWithfd > 0) {
+                serverSend(server.clientList[indexSender].chatWithfd, bufferSend);
+            }
+            // Clear out the tracking fields properly
+            memset(server.clientList[indexSender].chatWith, 0, MAX_NAME_SIZE);
+            server.clientList[indexSender].chatWithfd = 0;
+            serverSend(server.clientList[indexSender].fileDes, "Disconnected from current chat.\n");
+        } else {
+            serverSend(server.clientList[indexSender].fileDes, "You are not currently connected to anyone.\n");
+        }
         return 0;
     }
 
