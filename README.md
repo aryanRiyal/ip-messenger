@@ -1,25 +1,50 @@
-Chat Application using TCP SOCKET
-Basic TCP client-server-client communication using select() system call :
+# IP Messenger (TCP Socket Chat Application)
 
-(for Linux)
-Build Steps:
+A basic TCP client-server chat application using the `select()` system call.
 
-go the server directory and then run make command for compiling the server code.
-Similarly, go the client directory and then run make command for compiling the client code.
-Execute Steps:
+## Build and Run (using Docker)
 
-Use ./runS to run the server in server directory.
-Use ./runC client_name serverIPAddress in client directory on other terminals (EX. ./runC omkar 127.0.0.1)
-Functionalities for client :
-Use the following Command after running the client.
+Since the project uses Docker, you do not need gcc or a C compiler installed on your local machine. You only need Docker installed.
 
-1.LIST : It gives list of all connected clients.
+### 1. Build the images
 
-2.CONNECT : It is used to connect with another client which is present in list. (NOTE: If you want to send the message to the another client then step first is use CONNECT followed with message receiver client name).
+```bash
+docker compose build
+```
 
-3.ALL: It is used to send the broadcast message to all connected client to the server. (NOTE: There is no need to run CONNECT command simply run ALL with the message you want to send for all other clients which is present in list).
+### 2. Start the Server
 
-4.EXIT: It used to exit or disconnect with the server . It will terminate the client.
+```bash
+docker compose up -d server
+```
 
-NOTE:
-After terminating the server as well as client, use make clean command for cleaning all the .o extension files and output file from both the directories server and client .
+### 3. Connect a Client
+
+Open a new terminal and run:
+
+```bash
+docker compose run client <client_name> server
+```
+
+_(Example: `docker compose run client aryan server`)_
+
+Repeat this step in additional terminals with different client names to simulate multiple users.
+
+## Client Commands
+
+Once the client is running, you can use the following commands:
+
+1. **`LIST`**: Gives a list of all connected clients.
+2. **`CONNECT <client_name>`**: Connects your client with another specified client from the list.
+   _(Note: You must CONNECT before sending a private message to another client)._
+3. **`ALL <message>`**: Sends a broadcast message to every client connected to the server.
+   _(Note: No need to run CONNECT, just type `ALL message...` to send to everyone)._
+4. **`EXIT`**: Disconnects from the server and terminates the client.
+
+## Local Cleanup
+
+If you need to stop and clean up the Docker containers:
+
+```bash
+docker compose down
+```
