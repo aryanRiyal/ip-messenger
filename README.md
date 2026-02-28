@@ -23,10 +23,10 @@ docker compose up -d server
 Open a new terminal and run:
 
 ```bash
-docker compose run client <client_name> server
+docker compose run --rm --name <client_name> client <client_name> server
 ```
 
-_(Example: `docker compose run client aryan server`)_
+_(Example: `docker compose run --rm --name aryan client aryan server`)_
 
 Repeat this step in additional terminals with different client names to simulate multiple users.
 
@@ -43,8 +43,8 @@ Once the client is running, you can use the following commands:
 
 ## Local Cleanup
 
-If you need to stop and clean up the Docker containers:
+If you need to stop and clean up the Docker containers (including orphan containers):
 
 ```bash
-docker compose down
+docker compose down --remove-orphans
 ```

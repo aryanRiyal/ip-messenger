@@ -34,17 +34,17 @@ int processRecvData( int socket, char *buffer) {
 
     //MENU
     if(strncmp( buffer, "LIST", 4) ==0) {
-        memset( buffer, 0, sizeof(buffer));
+        memset( buffer, 0, MB);
         for(int i=0;i<server.totalClient;i++) {
             strcat( buffer, server.clientList[i].cname);
             strcat( buffer,";");
         }
         serverSend( socket, buffer);
-        memset( buffer, 0, sizeof(buffer));
+        memset( buffer, 0, MB);
         return 0;
     }
     if(strncmp(buffer, "CONNECT",7) == 0) {
-        sscanf(buffer,"%*[^:]:%s",connectedClient);
+        sscanf(buffer,"CONNECT%*[ ]%s",connectedClient);
         strcpy(server.clientList[indexSender].chatWith, connectedClient);
 
         indexReceiver = findClientIndexName( server.clientList[indexSender].chatWith);
@@ -62,13 +62,13 @@ int processRecvData( int socket, char *buffer) {
        }
 
     if(strncmp(buffer,"ALL",3)==0){
-        sscanf(buffer,"%*[^:]:%[^\n]%*c",toAll);
+        sscanf(buffer,"ALL%*[ ]%[^\n]",toAll);
         char broadcast[20]="BROADCAST BY";
         for(int i=0;i<server.totalClient;i++){
             if(i==indexSender){
                 continue;
             }
-            snprintf( bufferSend, sizeof(bufferSend), "[%s %s] : %s", broadcast, server.clientList[indexSender].cname, toAll);
+            snprintf( bufferSend, sizeof(bufferSend), "[%s %s] : %s\n", broadcast, server.clientList[indexSender].cname, toAll);
             serverSend( server.clientList[i].fileDes, bufferSend);
         }
         return 0;
